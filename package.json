@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A small university project to format sparql queries in a unified way. ",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
