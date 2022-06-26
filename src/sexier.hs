@@ -4,3 +4,5 @@ testString = "PREFIX dbo: <http://dbpedia.org/ontology/> PREFIX res: <http://dbp
 
 removeN xs = [ x | x <- xs, not (x `elem` "\n")]
 
+--test
+
