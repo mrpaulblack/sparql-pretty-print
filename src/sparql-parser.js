@@ -11,6 +11,10 @@ function parse(input) {
     var instructions  = tokanize(input);
     var i;
 
+    //basic check if there are any instructions
+    if (instructions == null)
+    return false;
+
     //check syntax
     for (i = 0; i < instructions.length; i++) {
         if (instructions[i][0] == 'PREFIX' && !testPrefix(instructions[i])) {
@@ -71,9 +75,13 @@ function tokanize (input) {
     var instructionsIndex = -1, instructionsPosition = 0;
     var i;
 
+    //return null if there is no input
+    if (tokens.length <= 0)
+        return null;
+
     //tokanize
     for (i = 0; i < tokens.length; i++) {
-        if (isDefWord(tokens[i])) {
+        if (isDefWord(tokens[i]) || i == 0) {
             instructionsIndex += 1;
             instructionsPosition = 0;
             instructions[instructionsIndex] = [];
@@ -81,6 +89,10 @@ function tokanize (input) {
         instructions[instructionsIndex][instructionsPosition] = tokens[i];
         instructionsPosition += 1;
     }
+
+    //return null if there are no base instructions
+    if (instructionsIndex <= 0 && !isDefWord(instructions[0][0]))
+        return null;
 
     return instructions;
 }
@@ -100,7 +112,7 @@ function isDefWord(token) {
 //check PREFIX syntax
 function testPrefix(prefix) {
     if (prefix.length != 3) {
-        console.log('Prefix: there are more or less then 3 statements in the isntruction');
+        console.log('Prefix: there are more or less then 3 statements in the instruction');
         return false;
     }
     if (!/[a-zA-Z]*:/g.test(prefix[1])) {
@@ -169,6 +181,6 @@ function testWhere(where) {
         console.log('Where: The last statement in the isntruction is not a }');
         return false;
     }
-    
+
     return true;
 }
