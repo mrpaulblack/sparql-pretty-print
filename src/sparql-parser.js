@@ -58,8 +58,10 @@ function pretty(input) {
     var output = '';
     for (i = 0; i < instructions.length; i++) {
         for (n = 0; n < instructions[i].length; n++) {
-            output += instructions[i][n] + ' ';
-            if (instructions[i][n] == '.' ||  instructions[i][n] == '{')
+            output += instructions[i][n]
+            if (n < instructions[i][n].length -1)
+                output += ' ';
+            if (instructions[i][n] == '.' || instructions[i][n] == ';' ||  instructions[i][n] == '{')
                 output += '\n';
         }
         output += '\n';
