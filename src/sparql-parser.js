@@ -56,13 +56,24 @@ function pretty(input) {
     //generate formated pretty print output
     //TODO correct newlines and indentation
     var output = '';
+    var inlines = '';
     for (i = 0; i < instructions.length; i++) {
         for (n = 0; n < instructions[i].length; n++) {
-            output += instructions[i][n]
-            if (n < instructions[i][n].length -1)
-                output += ' ';
-            if (instructions[i][n] == '.' || instructions[i][n] == ';' ||  instructions[i][n] == '{')
-                output += '\n';
+            //revert indent when closing braket
+            if (instructions[i][n] == '}') {
+                inlines = inlines.slice(0, inlines.length -2);
+                //TODO only when token before is a line ending token
+                output = output.slice(0, output.length -2);
+            }
+            //add instruction to output
+            output += instructions[i][n] + ' ';
+            //increase indent when opening braket
+            if (instructions[i][n] == '{')
+                inlines += '  ';
+            //add newline and indent when line ending tokens or when next char is closing braket
+            if ((instructions[i][n] == '.' || instructions[i][n] == ';' ||  instructions[i][n] == '{' || instructions[i][n] == '}')
+                || n < instructions[i].length -1 && instructions[i][n +1] == '}')
+                output += '\n' + inlines;
         }
         output += '\n';
     }
