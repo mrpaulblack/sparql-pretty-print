@@ -1,4 +1,4 @@
-export {parse, pretty};
+export {parse, type, pretty};
 
 /*
 SparQL query parser
@@ -17,25 +17,36 @@ function parse(input) {
 
     //check syntax
     for (i = 0; i < instructions.length; i++) {
-        if (instructions[i][0] == 'PREFIX' && !testPrefix(instructions[i])) {
-            console.log(instructions[i]);
-            return false;
-        }
-        else if (instructions[i][0] == 'SELECT' && !testSelect(instructions[i])) {
-            console.log(instructions[i]);
-            return false;
-        }
-        else if (instructions[i][0] == 'FROM' && !testFrom(instructions[i])) {
-            console.log(instructions[i]);
-            return false;
-        }
-        else if (instructions[i][0] == 'WHERE' && !testWhere(instructions[i])) {
+        var correct = true;
+        if (instructions[i][0] == 'PREFIX' && !testPrefix(instructions[i]))
+            correct = false;
+        else if (instructions[i][0] == 'SELECT' && !testSelect(instructions[i]))
+            correct = false;
+        else if (instructions[i][0] == 'FROM' && !testFrom(instructions[i]))
+            correct = false;
+        else if (instructions[i][0] == 'WHERE' && !testWhere(instructions[i]))
+            correct = false;
+        
+        if (!correct) {
             console.log(instructions[i]);
             return false;
         }
     }
 
     return true;
+}
+
+
+//TODO returns the type of the sparql query -> so if its a select, describe, ask or construct
+function type(input) {
+    //check if syntax is correct
+    if (!parse(input))
+        return null;
+
+    //create instructions array
+    var instructions  = tokanize(input);
+    
+    //TODO call a function that checks if a specific keyword is only once there and returns keyword or null
 }
 
 /*
@@ -54,7 +65,7 @@ function pretty(input) {
     var i, n;
 
     //generate formated pretty print output
-    //TODO correct newlines and indentation
+    //TODO FILTER, ORDER BY and so on
     var output = '';
     var inlines = '';
     for (i = 0; i < instructions.length; i++) {
@@ -62,7 +73,6 @@ function pretty(input) {
             //revert indent when closing braket
             if (instructions[i][n] == '}') {
                 inlines = inlines.slice(0, inlines.length -2);
-                //TODO only when token before is a line ending token
                 output = output.slice(0, output.length -2);
             }
             //add instruction to output
@@ -111,7 +121,10 @@ function tokanize (input) {
 }
 
 //match instruction keywords
-//TODO what about ASK!!!???
+//TODO what about ASK!!!??? -> retruns bool if answer can be found can be followed by {}
+//TODO what about DESCRIBE, DEFINE, CONSTRUCT????
+//https://www.iro.umontreal.ca/~lapalme/ift6281/sparql-1_1-cheat-sheet.pdf
+//TODO impl. logic since there can be only one select, ask, desribe or construct
 function isDefWord(token) {
     switch(token) {
         case 'PREFIX': return true;
