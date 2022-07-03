@@ -26,7 +26,7 @@ function parse(input) {
             correct = false;
         else if (instructions[i][0] == 'DESCRIBE' && !testDescribe(instructions[i]))
             correct = false;
-        if (instructions[i][0] == 'PREFIX' && !testPrefix(instructions[i]))
+        else if (instructions[i][0] == 'PREFIX' && !testPrefix(instructions[i]))
             correct = false;
         else if (instructions[i][0] == 'FROM' && !testFrom(instructions[i]))
             correct = false;
