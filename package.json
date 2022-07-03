@@ -1,15 +1,15 @@
 {
-  "name": "sparql-pretty-print",
+  "name": "sparqly",
   "version": "1.0.0",
-  "description": "A small university project to format sparql queries in a unified way. ",
-  "main": "src/index.js",
+  "description": "A small university project to format sparql queries in a unified way.",
+  "main": "src/sparqly.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrpaulblack/sparql-pretty-print.git"
+    "url": "git+https://github.com/mrpaulblack/sparqly.git"
   },
   "keywords": [
     "sparql"
@@ -17,7 +17,7 @@
   "author": "UrsusNix, mrpaulblack",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mrpaulblack/sparql-pretty-print/issues"
+    "url": "https://github.com/mrpaulblack/sparqly/issues"
   },
-  "homepage": "https://github.com/mrpaulblack/sparql-pretty-print#readme"
+  "homepage": "https://github.com/mrpaulblack/sparqly#readme"
 }
