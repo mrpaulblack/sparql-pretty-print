@@ -16,12 +16,17 @@ function parse(input) {
         return false;
 
     //check syntax
-    //TODO throw error if { { } }
     for (i = 0; i < instructions.length; i++) {
         var correct = true;
-        if (instructions[i][0] == 'PREFIX' && !testPrefix(instructions[i]))
+        if (instructions[i][0] == 'SELECT' && !testSelect(instructions[i]))
             correct = false;
-        else if (instructions[i][0] == 'SELECT' && !testSelect(instructions[i]))
+        else if (instructions[i][0] == 'ASK' && !testAsk(instructions[i]))
+            correct = false;
+        else if (instructions[i][0] == 'CONSTRUCT' && !testConstruct(instructions[i]))
+            correct = false;
+        else if (instructions[i][0] == 'DESCRIBE' && !testDescribe(instructions[i]))
+            correct = false;
+        if (instructions[i][0] == 'PREFIX' && !testPrefix(instructions[i]))
             correct = false;
         else if (instructions[i][0] == 'FROM' && !testFrom(instructions[i]))
             correct = false;
@@ -34,20 +39,30 @@ function parse(input) {
         }
     }
 
+    //check query type
+    if (testType(instructions) == null)
+        return false;
+
     return true;
 }
 
 
-//TODO returns the type of the sparql query -> so if its a select, describe, ask or construct
+/*
+SparQL query type
+Input: a sparql query as string
+Output: the type of the query or null if there is no type or multple types defined
+=> It will also console.log and print the failed test if syntax mismatch
+*/
 function type(input) {
     //check if syntax is correct
     if (!parse(input))
         return null;
 
-    //create instructions array
+    //create instructions array and type of function
     var instructions  = tokanize(input);
-    
-    //TODO call a function that checks if a specific keyword is only once there and returns keyword or null
+
+    //return type of query or null if there is no type or there are multiple types defined
+    return testType(instructions);
 }
 
 /*
@@ -106,7 +121,7 @@ function tokanize (input) {
 
     //tokanize
     for (i = 0; i < tokens.length; i++) {
-        if (isDefWord(tokens[i]) || i == 0) {
+        if (isDefWord(tokens[i]) || isKeyWord(tokens[i]) || i == 0) {
             instructionsIndex += 1;
             instructionsPosition = 0;
             instructions[instructionsIndex] = [];
@@ -116,25 +131,52 @@ function tokanize (input) {
     }
 
     //return null if there are no base instructions
-    if (instructionsIndex <= 0 && !isDefWord(instructions[0][0]))
+    if ((instructionsIndex <= 0 && (!isDefWord(instructions[0][0]))) || (instructionsIndex <= 0 && !isKeyWord(instructions[0][0])))
         return null;
 
     return instructions;
 }
 
-//match instruction keywords
-//TODO what about ASK!!!??? -> retruns bool if answer can be found can be followed by {}
-//TODO what about DESCRIBE, DEFINE, CONSTRUCT????
-//https://www.iro.umontreal.ca/~lapalme/ift6281/sparql-1_1-cheat-sheet.pdf
-//TODO impl. logic since there can be only one select, ask, desribe or construct
+//match query defining keywords
+//see: //https://www.iro.umontreal.ca/~lapalme/ift6281/sparql-1_1-cheat-sheet.pdf
+function isKeyWord(token) {
+    switch(token) {
+        case 'SELECT': return true;
+        case 'CONSTRUCT': return true;
+        case 'ASK': return true;
+        case 'DESCRIBE': return true;
+        default: return false;
+    }
+}
+
+//match instruction keywords that do not define the query type
+//TODO what about DEFINE????
 function isDefWord(token) {
     switch(token) {
         case 'PREFIX': return true;
-        case 'SELECT': return true;
         case 'FROM': return true;
         case 'WHERE': return true;
         default: return false;
     }
+}
+
+//return type of query or null if there is no type or multiple types defines
+function testType(instructions) {
+    var type = null;
+    var i;
+
+    for (i = 0; i < instructions.length; i++) {
+        if (isKeyWord(instructions[i][0])) {
+            if (type != null) {
+                console.log('Type: There are multiple types defined in one query:');
+                console.log(instructions[i]);
+                return null;
+            }
+            type = instructions[i][0];
+        }
+    }
+
+    return type;
 }
 
 //check PREFIX syntax
@@ -171,11 +213,33 @@ function testSelect(select) {
         if (/\?[a-zA-Z]*/g.test(select[n]))
             correct = true;
         if (!correct) {
-            console.log('Select: Statement did not match \'DISTINCT\' or \?[a-zA-z]*');
+            console.log('Select: Statement did not match \'DISTINCT\' or \?[a-zA-Z]*');
             return false;
         }
     }
 
+    return true;
+}
+
+//check ASK syntax
+function testAsk(ask) {
+    if (ask.length != 1) {
+        console.log('Ask: There is not exaclty one statement in the instruction')
+        return false;
+    }
+
+    return true;
+}
+
+//check DESCRIBE syntax
+//TODO write actual test!!!
+function testDescribe(describe) {
+    return true;
+}
+
+//check CONSTRUCT syntax
+//TODO write actual test!!!
+function testConstruct(consctruct) {
     return true;
 }
 
