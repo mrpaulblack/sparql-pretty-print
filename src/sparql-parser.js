@@ -13,9 +13,10 @@ function parse(input) {
 
     //basic check if there are any instructions
     if (instructions == null)
-    return false;
+        return false;
 
     //check syntax
+    //TODO throw error if { { } }
     for (i = 0; i < instructions.length; i++) {
         var correct = true;
         if (instructions[i][0] == 'PREFIX' && !testPrefix(instructions[i]))
@@ -26,7 +27,7 @@ function parse(input) {
             correct = false;
         else if (instructions[i][0] == 'WHERE' && !testWhere(instructions[i]))
             correct = false;
-        
+
         if (!correct) {
             console.log(instructions[i]);
             return false;
@@ -90,6 +91,7 @@ function pretty(input) {
     return output;
 }
 
+//TODO fix new line \n replacement
 //transform tokens in 2d instructions array each first index is one instruction and 2nd index is the tokens for that instruction
 function tokanize (input) {
     input.replace(/\n/g,' ');
@@ -166,7 +168,7 @@ function testSelect(select) {
         var correct = false;
         if (select[n] == 'DISTINCT')
             correct = true;
-        if (/\?[a-zA-z]*/g.test(select[n]))
+        if (/\?[a-zA-Z]*/g.test(select[n]))
             correct = true;
         if (!correct) {
             console.log('Select: Statement did not match \'DISTINCT\' or \?[a-zA-z]*');
